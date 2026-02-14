@@ -1,0 +1,117 @@
+{
+  "theme": "light",
+  "typography": {
+    "font_family_heading": "Manrope, sans-serif",
+    "font_family_body": "Inter, sans-serif",
+    "scale": {
+      "h1": "text-5xl md:text-6xl font-bold tracking-tight leading-none",
+      "h2": "text-4xl md:text-5xl font-semibold tracking-tight",
+      "h3": "text-2xl md:text-3xl font-medium tracking-tight",
+      "body": "text-base md:text-lg leading-relaxed text-slate-600",
+      "caption": "text-sm font-medium uppercase tracking-widest text-slate-500"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": "#0F172A",
+      "secondary": "#334155",
+      "accent": "#D50032",
+      "background": "#FFFFFF",
+      "surface": "#F8FAFC",
+      "border": "#E2E8F0",
+      "success": "#10B981",
+      "error": "#EF4444"
+    },
+    "usage": {
+      "background": "bg-white",
+      "text_primary": "text-slate-900",
+      "text_secondary": "text-slate-600",
+      "border": "border-slate-200",
+      "primary_cta": "bg-[#D50032] text-white hover:bg-[#B9002D]",
+      "secondary_cta": "bg-slate-100 text-slate-900 hover:bg-slate-200"
+    }
+  },
+  "layout_strategies": {
+    "container": "container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl",
+    "section_spacing": "py-16 md:py-24",
+    "bento_grid": {
+      "wrapper": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8",
+      "hero_cell": "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
+      "tall_cell": "col-span-1 row-span-2",
+      "wide_cell": "col-span-1 md:col-span-2",
+      "standard_cell": "col-span-1"
+    }
+  },
+  "components": {
+    "header": {
+      "style": "sticky top-0 z-50 w-full border-b border-white/10 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60",
+      "elements": "Logo (Left), Nav Links (Center - Manrope font), Actions (Right - Icons + Cart)"
+    },
+    "hero": {
+      "style": "relative w-full overflow-hidden bg-slate-50",
+      "layout": "grid grid-cols-1 lg:grid-cols-2 min-h-[80vh] items-center",
+      "typography": "Left aligned, massive H1, clear CTA"
+    },
+    "product_card": {
+      "style": "group relative flex flex-col overflow-hidden bg-white hover:shadow-xl transition-all duration-300 ease-out border border-transparent hover:border-slate-100 rounded-none",
+      "image_container": "aspect-square overflow-hidden bg-slate-50 p-8",
+      "image_interaction": "group-hover:scale-105 transition-transform duration-500",
+      "details": "pt-4 text-left"
+    },
+    "buttons": {
+      "primary": "inline-flex items-center justify-center rounded-sm bg-[#D50032] px-8 py-3 text-sm font-medium text-white shadow transition-colors hover:bg-[#B9002D] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950",
+      "outline": "inline-flex items-center justify-center rounded-sm border border-slate-200 bg-transparent px-8 py-3 text-sm font-medium shadow-sm transition-colors hover:bg-slate-100 hover:text-slate-900"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-white/70 border border-white/20 shadow-sm",
+    "gradients": "bg-gradient-to-b from-slate-50 to-white",
+    "shadows": {
+      "soft": "shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+      "hover": "shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
+    }
+  },
+  "image_urls": {
+    "hero": [
+      {
+        "url": "https://images.unsplash.com/photo-1765766601532-90e9b96320c8",
+        "alt": "Premium Dark Kitchen Interior",
+        "category": "hero_main"
+      }
+    ],
+    "categories": [
+      {
+        "url": "https://images.unsplash.com/photo-1723259461381-59ab9fa18f5d",
+        "alt": "Built-in Ovens",
+        "category": "ovens"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1762810931790-40b25e10b3e7",
+        "alt": "Induction Cooktops",
+        "category": "cooktops"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1676907228185-6869277a9f8f",
+        "alt": "Integrated Dishwashers",
+        "category": "dishwashers"
+      }
+    ],
+    "lifestyle": [
+      {
+        "url": "https://images.unsplash.com/photo-1760067537565-1d4cbb8da0c3",
+        "alt": "Modern Kitchen Island",
+        "category": "inspiration"
+      }
+    ]
+  },
+  "universal_guidelines": [
+    "Use Manrope for all Headings (H1-H4) and Inter for Body text.",
+    "Do NOT use gradients for text or buttons. Stick to solid, high-contrast colors.",
+    "Spacing is luxury. Use py-24 for major sections.",
+    "Borders should be subtle: border-slate-100 or border-slate-200.",
+    "Use data-testid attributes for all interactive elements.",
+    "Images must have alt tags for accessibility.",
+    "Hover states must be explicit (e.g., text color change, subtle lift).",
+    "Do not use rounded-xl or rounded-2xl. Keep it sharp or minimal rounded-sm (2px-4px) for that 'German Engineering' precision."
+  ]
+}
