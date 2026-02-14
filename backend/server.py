@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy import select, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -32,6 +32,8 @@ class Base(DeclarativeBase):
 async def get_db():
     async with async_session() as session:
         yield session
+
+
 
 # ============= DATABASE MODELS =============
 class User(Base):
@@ -138,7 +140,30 @@ class ProductResponse(BaseModel):
     ratings_avg: float = 0.0
     ratings_count: int = 0
     created_at: str
+def serialize_product(product: Product) -> ProductResponse:
+    return ProductResponse(
+        id=product.id,
+        name=product.name,
+        description=product.description,
+        price=product.price,
+        category=product.category,
+        images=json.loads(product.images),
+        stock=product.stock,
+        specifications=json.loads(product.specifications),
+        ratings_avg=product.ratings_avg,
+        ratings_count=product.ratings_count,
+        created_at=product.created_at.isoformat()
+    )
 
+def serialize_user(user: User) -> UserResponse:
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        name=user.name,
+        role=user.role,
+        phone=user.phone,
+        created_at=user.created_at.isoformat()
+    )
 class CartItem(BaseModel):
     product_id: str
     quantity: int
@@ -266,7 +291,8 @@ async def register(user_data: UserRegister, db: AsyncSession = Depends(get_db)):
     await db.refresh(user)
     
     token = create_access_token(user_id, user_data.email, "customer")
-    return {"token": token, "user": UserResponse.model_validate(user)}
+    return {"token": token, "user": serialize_user(user)}
+
 
 @api_router.post("/auth/login")
 async def login(credentials: UserLogin, db: AsyncSession = Depends(get_db)):
@@ -276,11 +302,13 @@ async def login(credentials: UserLogin, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     token = create_access_token(user.id, user.email, user.role)
-    return {"token": token, "user": UserResponse.model_validate(user)}
+    return {"token": token, "user": serialize_user(user)}
+
 
 @api_router.get("/auth/me", response_model=UserResponse)
 async def get_me(user: User = Depends(get_current_user)):
-    return UserResponse.model_validate(user)
+    return serialize_user(user)
+
 
 # ============= PRODUCT ROUTES =============
 @api_router.get("/products", response_model=List[ProductResponse])
@@ -306,7 +334,8 @@ async def get_products(
     
     result = await db.execute(query.limit(1000))
     products = result.scalars().all()
-    return [ProductResponse.model_validate(p) for p in products]
+    return [serialize_product(p) for p in products]
+
 
 @api_router.get("/products/{product_id}", response_model=ProductResponse)
 async def get_product(product_id: str, db: AsyncSession = Depends(get_db)):
@@ -314,7 +343,8 @@ async def get_product(product_id: str, db: AsyncSession = Depends(get_db)):
     product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return ProductResponse.model_validate(product)
+    return serialize_product(product)
+
 
 @api_router.post("/products", response_model=ProductResponse)
 async def create_product(product_data: ProductCreate, admin: User = Depends(get_admin_user), db: AsyncSession = Depends(get_db)):
@@ -332,7 +362,8 @@ async def create_product(product_data: ProductCreate, admin: User = Depends(get_
     db.add(product)
     await db.commit()
     await db.refresh(product)
-    return ProductResponse.model_validate(product)
+    return serialize_product(product)
+
 
 @api_router.put("/products/{product_id}", response_model=ProductResponse)
 async def update_product(product_id: str, product_data: ProductCreate, admin: User = Depends(get_admin_user), db: AsyncSession = Depends(get_db)):
