@@ -1,0 +1,57 @@
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-sm bg-bosch-red px-8 py-3 text-sm font-medium text-white shadow transition-colors hover:bg-bosch-red-dark focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-sm border border-slate-200 bg-transparent px-8 py-3 text-sm font-medium shadow-sm transition-colors hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  .product-card {
+    @apply group relative flex flex-col overflow-hidden bg-white hover:shadow-hover transition-all duration-300 ease-out border border-transparent hover:border-slate-100 rounded-sm;
+  }
+
+  .product-image-container {
+    @apply aspect-square overflow-hidden bg-bosch-surface p-8;
+  }
+
+  .product-image {
+    @apply w-full h-full object-contain group-hover:scale-105 transition-transform duration-500;
+  }
+
+  .input-field {
+    @apply flex h-10 w-full rounded-sm border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .container-custom {
+    @apply container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl;
+  }
+
+  .section-spacing {
+    @apply py-16 md:py-24;
+  }
+
+  .bento-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8;
+  }
+
+  .hero-text {
+    @apply text-5xl md:text-6xl font-bold tracking-tight leading-none font-heading;
+  }
+
+  .subheading-text {
+    @apply text-2xl md:text-3xl font-medium tracking-tight font-heading;
+  }
+
+  .body-text {
+    @apply text-base md:text-lg leading-relaxed text-slate-600 font-body;
+  }
+
+  .caption-text {
+    @apply text-sm font-medium uppercase tracking-widest text-slate-500;
+  }
+
+  .header-glass {
+    @apply sticky top-0 z-50 w-full border-b border-white/10 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60;
+  }
+}
