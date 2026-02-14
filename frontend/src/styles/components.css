@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer components {
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-sm bg-bosch-red px-8 py-3 text-sm font-medium text-white shadow transition-colors hover:bg-bosch-red-dark focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950;
@@ -8,7 +12,7 @@
   }
 
   .product-card {
-    @apply group relative flex flex-col overflow-hidden bg-white hover:shadow-hover transition-all duration-300 ease-out border border-transparent hover:border-slate-100 rounded-sm;
+    @apply relative flex flex-col overflow-hidden bg-white transition-all duration-300 ease-out border border-transparent hover:border-slate-100 rounded-sm hover:shadow-hover;
   }
 
   .product-image-container {
