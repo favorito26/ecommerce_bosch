@@ -34,7 +34,8 @@ dist
 
 *token.json*
 *credentials.json*
-
+*package-lock.json*
+*package.json*
 # Logs and debug files
 npm-debug.log*
 yarn-debug.log*
