@@ -266,6 +266,12 @@ def serialize_order(order: Order) -> OrderResponse:
 
 # ============= UTILS =============
 def hash_password(password: str) -> str:
+    # bcrypt limit: 72 bytes
+    if len(password.encode("utf-8")) > 72:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at most 72 characters"
+        )
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
