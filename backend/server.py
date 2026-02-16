@@ -116,7 +116,7 @@ class UserResponse(BaseModel):
     name: str
     role: str = "customer"
     phone: Optional[str] = None
-    created_at: str
+    created_at: datetime
 
 class ProductCreate(BaseModel):
     name: str
@@ -139,7 +139,7 @@ class ProductResponse(BaseModel):
     specifications: dict
     ratings_avg: float = 0.0
     ratings_count: int = 0
-    created_at: str
+    created_at: datetime
 def serialize_product(product: Product) -> ProductResponse:
     return ProductResponse(
         id=product.id,
@@ -184,7 +184,7 @@ class ReviewResponse(BaseModel):
     user_name: str
     rating: int
     comment: str
-    created_at: str
+    created_at: datetime
 
 class OrderItem(BaseModel):
     product_id: str
@@ -209,12 +209,15 @@ class OrderResponse(BaseModel):
     razorpay_payment_id: Optional[str] = None
     payment_status: str = "pending"
     order_status: str = "pending"
-    created_at: str
+    created_at: datetime
 
 class PaymentVerify(BaseModel):
     razorpay_order_id: str
     razorpay_payment_id: str
     razorpay_signature: str
+
+class PaymentOrderCreate(BaseModel):
+    amount: float
 
 # ============= SETUP =============
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -234,6 +237,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+def serialize_order(order: Order) -> OrderResponse:
+    return OrderResponse(
+        id=order.id,
+        user_id=order.user_id,
+        items=json.loads(order.items),
+        total_amount=order.total_amount,
+        shipping_address=json.loads(order.shipping_address),
+        razorpay_order_id=order.razorpay_order_id,
+        razorpay_payment_id=order.razorpay_payment_id,
+        payment_status=order.payment_status,
+        order_status=order.order_status,
+        created_at=order.created_at
+    )
 
 # ============= UTILS =============
 def hash_password(password: str) -> str:
@@ -408,7 +424,7 @@ async def get_cart(user: User = Depends(get_current_user), db: AsyncSession = De
         result = await db.execute(select(Product).where(Product.id == item["product_id"]))
         product = result.scalar_one_or_none()
         if product:
-            items_with_details.append({**item, "product": ProductResponse.model_validate(product).model_dump()})
+            items_with_details.append({**item, "product": serialize_product(product).model_dump()})
     
     return {"items": items_with_details}
 
@@ -521,10 +537,10 @@ async def create_review(review_data: ReviewCreate, user: User = Depends(get_curr
 
 # ============= PAYMENT & ORDER ROUTES =============
 @api_router.post("/payment/create-order")
-async def create_payment_order(amount: float, user: User = Depends(get_current_user)):
+async def create_payment_order(order_data: PaymentOrderCreate, user: User = Depends(get_current_user)):
     try:
         order = razorpay_client.order.create({
-            "amount": int(amount * 100),
+            "amount": int(order_data.amount * 100),
             "currency": "INR",
             "payment_capture": 1
         })
@@ -567,13 +583,13 @@ async def create_order(order_data: OrderCreate, user: User = Depends(get_current
     
     await db.commit()
     await db.refresh(order)
-    return OrderResponse.model_validate(order)
+    return serialize_order(order)
 
 @api_router.get("/orders", response_model=List[OrderResponse])
 async def get_orders(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Order).where(Order.user_id == user.id).order_by(Order.created_at.desc()).limit(1000))
     orders = result.scalars().all()
-    return [OrderResponse.model_validate(o) for o in orders]
+    return [serialize_order(o) for o in orders]
 
 @api_router.get("/orders/{order_id}", response_model=OrderResponse)
 async def get_order(order_id: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
@@ -581,7 +597,8 @@ async def get_order(order_id: str, user: User = Depends(get_current_user), db: A
     order = result.scalar_one_or_none()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    return OrderResponse.model_validate(order)
+    return serialize_order(order)
+
 
 @api_router.patch("/orders/{order_id}/payment")
 async def update_order_payment(order_id: str, payment_id: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
@@ -601,7 +618,7 @@ async def update_order_payment(order_id: str, payment_id: str, user: User = Depe
 async def get_all_orders(admin: User = Depends(get_admin_user), db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Order).order_by(Order.created_at.desc()).limit(1000))
     orders = result.scalars().all()
-    return [OrderResponse.model_validate(o) for o in orders]
+    return [serialize_order(o) for o in orders]
 
 @api_router.patch("/admin/orders/{order_id}")
 async def update_order_status(order_id: str, order_status: str, admin: User = Depends(get_admin_user), db: AsyncSession = Depends(get_db)):
