@@ -14,8 +14,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Wishlist from './pages/Wishlist';
 import Admin from './pages/Admin';
-import '@/index.css';
-import '@/styles/components.css';
+import './index.css';
+import './styles/components.css';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
