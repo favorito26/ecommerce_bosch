@@ -19,10 +19,17 @@ import jwt
 import razorpay
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+if os.getenv("RENDER") is None:
+    load_dotenv(ROOT_DIR / ".env")
+
 
 # ============= DATABASE SETUP =============
-DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL not set")
+
+DATABASE_URL = DATABASE_URL.strip()
+
 engine = create_async_engine(DATABASE_URL, echo=False)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
@@ -446,7 +453,7 @@ async def update_cart(cart_data: CartUpdate, user: User = Depends(get_current_us
         )
         db.add(cart)
     
-    await db.commit()
+    await db.commit()   
     return {"message": "Cart updated"}
 
 # ============= WISHLIST ROUTES =============
