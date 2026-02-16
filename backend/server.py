@@ -243,12 +243,14 @@ app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 # Add CORS middleware BEFORE router
+origins = os.environ.get("CORS_ORIGINS", "").split(",")
+
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=origins,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 def serialize_order(order: Order) -> OrderResponse:
     return OrderResponse(
