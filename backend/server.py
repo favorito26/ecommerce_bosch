@@ -17,6 +17,8 @@ from datetime import datetime, timezone, timedelta
 from passlib.context import CryptContext
 import jwt
 import razorpay
+from sqlalchemy.engine import URL
+from sqlalchemy.ext.asyncio import create_async_engine
 
 ROOT_DIR = Path(__file__).parent
 if os.getenv("RENDER") is None:
@@ -24,13 +26,17 @@ if os.getenv("RENDER") is None:
 
 
 # ============= DATABASE SETUP =============
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL not set")
+database_url = URL.create(
+    drivername="mysql+aiomysql",
+    username="u434641461_bosch",
+    password=os.getenv("DB_PASSWORD"),  # ← your real password from env
+    host="srv842.hstgr.io",             # ← or "82.25.121.155"
+    port=3306,
+    database="u434641461_bosch_ecom",
+    query={"charset": "utf8mb4"}        # Helps with emojis/special chars
+)
 
-DATABASE_URL = DATABASE_URL.strip()
-
-engine = create_async_engine(DATABASE_URL, echo=False)
+engine = create_async_engine(database_url, echo=False, pool_pre_ping=True)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 class Base(DeclarativeBase):
