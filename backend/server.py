@@ -19,6 +19,7 @@ import jwt
 import razorpay
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import create_async_engine
+import hashlib
 
 ROOT_DIR = Path(__file__).parent
 if os.getenv("RENDER") is None:
@@ -267,17 +268,15 @@ def serialize_order(order: Order) -> OrderResponse:
     )
 
 # ============= UTILS =============
+def _prehash(password: str) -> str:
+    # SHA-256 → fixed 32 bytes
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
 def hash_password(password: str) -> str:
-    # bcrypt limit: 72 bytes
-    if len(password.encode("utf-8")) > 72:
-        raise HTTPException(
-            status_code=400,
-            detail="Password must be at most 72 characters"
-        )
-    return pwd_context.hash(password)
+    return pwd_context.hash(_prehash(password))
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return pwd_context.verify(_prehash(plain_password), hashed_password)
 
 def create_access_token(user_id: str, email: str, role: str) -> str:
     expire = datetime.now(timezone.utc) + timedelta(hours=int(os.environ['JWT_EXPIRATION_HOURS']))
