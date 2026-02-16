@@ -524,16 +524,135 @@ const Admin = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">Image URL</label>
-                    <input
-                      type="url"
-                      value={productForm.images[0]}
-                      onChange={(e) => setProductForm({ ...productForm, images: [e.target.value] })}
-                      className="input-field"
-                      required
-                      data-testid="product-image-input"
-                      placeholder="https://example.com/image.jpg"
-                    />
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium">Image URLs</label>
+                      <button
+                        type="button"
+                        onClick={() => setProductForm({ 
+                          ...productForm, 
+                          images: [...productForm.images, ''] 
+                        })}
+                        className="flex items-center gap-2 text-sm text-bosch-red hover:text-bosch-red/80 transition-colors"
+                        data-testid="add-image-button"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Image
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {productForm.images.map((image, index) => (
+                        <div key={index} className="space-y-2">
+                          <div className="flex gap-2">
+                            <input
+                              type="url"
+                              value={image}
+                              onChange={(e) => {
+                                const newImages = [...productForm.images];
+                                newImages[index] = e.target.value;
+                                setProductForm({ ...productForm, images: newImages });
+                              }}
+                              className="input-field flex-1"
+                              required={index === 0}
+                              data-testid={`product-image-input-${index}`}
+                              placeholder="https://example.com/image.jpg"
+                            />
+                            {productForm.images.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newImages = productForm.images.filter((_, i) => i !== index);
+                                  setProductForm({ ...productForm, images: newImages });
+                                }}
+                                className="px-3 py-2 text-slate-600 hover:text-bosch-red transition-colors rounded border border-slate-200 hover:border-bosch-red"
+                                data-testid={`remove-image-button-${index}`}
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                          {image && (
+                            <div className="text-sm text-slate-600">
+                              <img
+                                src={image}
+                                alt={`Product preview ${index + 1}`}
+                                className="h-24 w-24 object-cover rounded border border-slate-200"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium">Specifications</label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newSpecs = { ...productForm.specifications };
+                          newSpecs[`key_${Date.now()}`] = '';
+                          setProductForm({ ...productForm, specifications: newSpecs });
+                        }}
+                        className="flex items-center gap-2 text-sm text-bosch-red hover:text-bosch-red/80 transition-colors"
+                        data-testid="add-specification-button"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Specification
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {Object.entries(productForm.specifications).length === 0 ? (
+                        <p className="text-sm text-slate-500">No specifications added yet</p>
+                      ) : (
+                        Object.entries(productForm.specifications).map(([key, value]) => (
+                          <div key={key} className="flex gap-2">
+                            <input
+                              type="text"
+                              value={key}
+                              onChange={(e) => {
+                                const newSpecs = { ...productForm.specifications };
+                                delete newSpecs[key];
+                                newSpecs[e.target.value] = value;
+                                setProductForm({ ...productForm, specifications: newSpecs });
+                              }}
+                              className="input-field flex-1"
+                              placeholder="Specification name (e.g., Power, Capacity)"
+                              data-testid={`specification-key-${key}`}
+                            />
+                            <input
+                              type="text"
+                              value={value}
+                              onChange={(e) => {
+                                const newSpecs = { ...productForm.specifications };
+                                newSpecs[key] = e.target.value;
+                                setProductForm({ ...productForm, specifications: newSpecs });
+                              }}
+                              className="input-field flex-1"
+                              placeholder="Value (e.g., 2000W)"
+                              data-testid={`specification-value-${key}`}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newSpecs = { ...productForm.specifications };
+                                delete newSpecs[key];
+                                setProductForm({ ...productForm, specifications: newSpecs });
+                              }}
+                              className="px-3 py-2 text-slate-600 hover:text-bosch-red transition-colors rounded border border-slate-200 hover:border-bosch-red"
+                              data-testid={`remove-specification-button-${key}`}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex gap-4 pt-4">

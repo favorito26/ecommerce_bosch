@@ -42,7 +42,7 @@ const Hero = () => {
           {/* Right Image */}
           <div className="relative h-[600px] rounded-sm overflow-hidden shadow-hover">
             <img
-              src="https://images.unsplash.com/photo-1765766601532-90e9b96320c8?w=800&q=80"
+              src="https://media3.bosch-home.com/Images/450x600/25204055_BookanAppointmentforExperienceCenter_WebsiteTeaserBanners_900x12001.webp"
               alt="Premium Dark Kitchen Interior"
               className="w-full h-full object-cover"
             />
