@@ -398,7 +398,7 @@ async def update_product(product_id: str, product_data: ProductCreate, admin: Us
     
     await db.commit()
     await db.refresh(product)
-    return ProductResponse.model_validate(product)
+    return serialize_product(product)
 
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, admin: User = Depends(get_admin_user), db: AsyncSession = Depends(get_db)):
@@ -463,7 +463,7 @@ async def get_wishlist(user: User = Depends(get_current_user), db: AsyncSession 
         result = await db.execute(select(Product).where(Product.id == product_id))
         product = result.scalar_one_or_none()
         if product:
-            products.append(ProductResponse.model_validate(product))
+            products.append(serialize_product(product))
     
     return {"products": products}
 
