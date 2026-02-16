@@ -1,22 +1,17 @@
-# --- Core API ---
 fastapi==0.110.1
 starlette==0.37.2
 uvicorn==0.25.0
 gunicorn
 
-# --- Database ---
 sqlalchemy
 aiomysql
 python-dotenv
 
-# --- Auth & Security ---
 python-jose
+PyJWT==2.11.0
 passlib[bcrypt]
 email-validator
 python-multipart
 
-# --- Payments ---
 razorpay==2.0.0
-
-# --- HTTP ---
 requests
